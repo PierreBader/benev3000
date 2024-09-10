@@ -29,11 +29,19 @@
         :val="benevole.id"
         :label="benevole.name"
       />
+      <div class="row">
+        <PlanningPeriode
+          v-for="periode in store.periodes"
+          :key="periode.id"
+          :periode="periode"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { usePlanningStore } from 'src/stores/planning';
 import { ref } from 'vue';
 

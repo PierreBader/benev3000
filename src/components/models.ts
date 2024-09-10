@@ -16,7 +16,7 @@ export interface Benevole {
 }
 
 export interface Assignation {
-  idBenevole: number;
+  benevole: string;
   periode: string;
   creneau: string;
   poste: string;

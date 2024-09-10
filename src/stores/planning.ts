@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Benevole, Periode } from 'src/components/models';
+import { Assignation, Benevole, Periode } from 'src/components/models';
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
@@ -43,6 +43,15 @@ export const usePlanningStore = defineStore('planning', {
         postes: ['Logistique', 'Bar', 'Caisse', 'Catering'],
       },
     ] as Periode[],
+
+    assignations: [
+      {
+        benevole: 'Pierre B',
+        periode: 'Vendredi',
+        creneau: 'Matin',
+        poste: 'Montage',
+      },
+    ] as Assignation[],
   }),
 
   getters: {
