@@ -3,12 +3,29 @@ import { Benevole, Periode } from 'src/components/models';
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
-    eventName: '',
+    eventName: 'Microsihpon #8',
     benevoles: [
       {
         id: 1,
         name: 'Pierre B',
         email: 'pierre.bader@gmail.com',
+        postes: ['Montage', 'Logistique', 'Bar', 'Caisse'],
+        availability: [
+          'Vendredi Matin',
+          'Vendredi Après-midi',
+          'Samedi 10h-12h',
+        ],
+      },
+      {
+        id: 2,
+        name: 'Marlène',
+        email: 'marlene.fritsch@gmail.com',
+        postes: ['Accueil', 'Bar', 'Caisse'],
+        availability: [
+          'Vendredi Après-midi',
+          'Samedi 10h-12h',
+          'Samedi 12h-13h',
+        ],
       },
     ] as Benevole[],
 
@@ -16,20 +33,23 @@ export const usePlanningStore = defineStore('planning', {
       {
         id: 1,
         name: 'Vendredi',
-        creneaux: [
-          {
-            id: 1,
-            name: 'Matin',
-          },
-          {
-            id: 2,
-            name: 'Après-midi',
-          },
-        ],
+        creneaux: ['Matin', 'Après-midi'],
         postes: ['Montage', 'Accueil'],
+      },
+      {
+        id: 2,
+        name: 'Samedi',
+        creneaux: ['10h-12h', '12h-13h', '13h-14h', '14h-15h'],
+        postes: ['Logistique', 'Bar', 'Caisse', 'Catering'],
       },
     ] as Periode[],
   }),
+
+  getters: {
+    allPostes: (state) => {
+      return [...new Set(state.periodes.flatMap((b) => b.postes))];
+    },
+  },
 
   persist: {
     storage: sessionStorage,
@@ -45,6 +65,8 @@ export const usePlanningStore = defineStore('planning', {
         id: id,
         name: 'Bénévole ' + id,
         email: 'benevole' + id + '@gmail.com',
+        postes: [],
+        availability: [],
       });
     },
 

@@ -21,7 +21,7 @@
         to="/periodes"
       />
       <br />
-      <q-radio v-model="benevoleId" :val="0" label="Aucun" />
+      <q-radio v-model="benevoleId" :val="0" label="Tous" />
       <q-radio
         v-for="benevole in store.benevoles"
         v-model="benevoleId"

@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row item-start">
-      <div class="col-4 item-start">
+      <div class="col-3 item-start">
         <q-btn icon="arrow_back" label="Retour" to="/" />
         <q-list>
           <q-item-label header>Bénévoles</q-item-label>
@@ -18,13 +18,28 @@
           @click="store.addBenevole()"
         />
       </div>
-      <div class="col-8 items-center">
+      <div class="col-9 items-center">
         <div v-if="!selected">Sélectionne un bénévole</div>
         <div v-else>
           <div class="q-pa-md">
             <div class="q-gutter-md" style="max-width: 400px">
               <q-input v-model="selected.name" label="Nom" />
               <q-input v-model="selected.email" label="Adresse e-mail" />
+              <q-option-group
+                v-model="selected.postes"
+                :options="postOptions"
+                type="checkbox"
+                color="primary"
+              />
+              <q-tree
+                class="col-12 col-sm-6"
+                :nodes="creneauxNodes"
+                node-key="label"
+                tick-strategy="leaf"
+                v-model:ticked="selected.availability"
+                default-expand-all
+                color="teal"
+              />
             </div>
           </div>
         </div>
@@ -52,5 +67,31 @@ const selected = computed(() => {
 
   const benevoleId = +route.params.id;
   return store.benevoles.find((b) => b.id == benevoleId);
+});
+
+const postOptions = computed(() => {
+  if (store.allPostes.length === 0) return [];
+  return store.allPostes.map((p) => {
+    return {
+      label: p!,
+      value: p!,
+    };
+  });
+});
+
+const creneauxNodes = computed(() => {
+  return [
+    {
+      label: store.eventName,
+      children: store.periodes.map((p) => {
+        return {
+          label: p.name,
+          children: p.creneaux.map((c) => {
+            return { label: p.name + ' ' + c };
+          }),
+        };
+      }),
+    },
+  ];
 });
 </script>

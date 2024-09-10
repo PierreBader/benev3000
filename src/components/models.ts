@@ -11,31 +11,22 @@ export interface Benevole {
   id: number;
   name: string;
   email: string;
-  postes?: string[];
-  availability?: Timeslot[];
-}
-
-export interface Timeslot {
-  start: Date;
-  end: Date;
+  postes: string[];
+  availability: string[];
 }
 
 export interface Assignation {
   idBenevole: number;
-  creneauName: string;
+  periode: string;
+  creneau: string;
   poste: string;
 }
 
 export interface Periode {
   id: number;
   name: string;
-  creneaux: Creneau[];
+  creneaux: string[];
   postes: string[];
-}
-
-export interface Creneau {
-  id: number;
-  name: string;
 }
 
 export interface Planning {
