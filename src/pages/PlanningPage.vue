@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-input
-      v-model="store.eventName"
+      v-model="planningStore.eventName"
       stack-label
       style="max-width: 300px"
       label="Planning de l'évenement"
@@ -21,17 +21,17 @@
         to="/periodes"
       />
       <br />
-      <q-radio v-model="benevoleId" :val="0" label="Tous" />
+      <q-radio v-model="guiStore.selectedBenevole" val="" label="Tous" />
       <q-radio
-        v-for="benevole in store.benevoles"
-        v-model="benevoleId"
+        v-for="benevole in planningStore.benevoles"
+        v-model="guiStore.selectedBenevole"
         v-bind:key="benevole.id"
-        :val="benevole.id"
+        :val="benevole.name"
         :label="benevole.name"
       />
       <div class="row">
         <PlanningPeriode
-          v-for="periode in store.periodes"
+          v-for="periode in planningStore.periodes"
           :key="periode.id"
           :periode="periode"
         />
@@ -42,14 +42,13 @@
 
 <script setup lang="ts">
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
+import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-import { ref } from 'vue';
 
-const store = usePlanningStore();
+const planningStore = usePlanningStore();
+const guiStore = useGuiStore();
 
 defineOptions({
   name: 'PlanningPage',
 });
-
-let benevoleId = ref(0);
 </script>

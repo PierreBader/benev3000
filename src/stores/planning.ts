@@ -91,5 +91,19 @@ export const usePlanningStore = defineStore('planning', {
         postes: [],
       });
     },
+
+    removeAssignation(assignation: Assignation) {
+      this.assignations = this.assignations.filter(
+        (a) =>
+          a.benevole != assignation.benevole ||
+          a.periode != assignation.periode ||
+          a.creneau != assignation.creneau ||
+          a.poste != assignation.poste
+      );
+    },
+
+    addAssignation(assignation: Assignation) {
+      this.assignations.push(assignation);
+    },
   },
 });
