@@ -33,9 +33,15 @@
             to="/benevoles"
           />
         </q-btn-group>
-        <q-btn-group push>
+        <q-btn-group>
           <q-btn color="primary" outline icon="upload" label="Importer" />
-          <q-btn color="primary" outline icon="download" label="Exporter" />
+          <q-btn
+            color="primary"
+            outline
+            icon="download"
+            label="Exporter"
+            @click="saveFile"
+          />
         </q-btn-group>
       </div>
 
@@ -89,11 +95,25 @@
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
 
 defineOptions({
   name: 'PlanningPage',
 });
+
+function saveFile() {
+  const data = JSON.stringify(planningStore.export);
+  const blob = new Blob([data], { type: 'application/b3k' });
+  const link = document.createElement('a');
+
+  if (planningStore.eventName) {
+    link.download = planningStore.eventName + '.b3k';
+  } else {
+    link.download = 'event.b3k';
+  }
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
 </script>

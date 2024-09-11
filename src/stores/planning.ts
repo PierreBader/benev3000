@@ -13,6 +13,14 @@ export const usePlanningStore = defineStore('planning', {
     allPostes: (state) => {
       return [...new Set(state.periodes.flatMap((b) => b.postes))];
     },
+    export: (state) => {
+      return {
+        eventName: state.eventName,
+        benevoles: state.benevoles,
+        periodes: state.periodes,
+        assignations: state.assignations,
+      };
+    },
   },
 
   persist: {
