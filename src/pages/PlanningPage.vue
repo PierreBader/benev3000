@@ -1,40 +1,79 @@
 <template>
   <div class="q-pa-md">
-    <q-input
-      v-model="planningStore.eventName"
-      stack-label
-      style="max-width: 300px"
-      label="Planning de l'évenement"
-    />
-
     <div class="q-gutter-sm">
-      <q-btn
-        color="primary"
-        icon="manage_accounts"
-        label="Bénévoles"
-        to="/benevoles"
-      />
+      <div class="text-h4">
+        Planning de
+        <span class="cursor-pointer">
+          {{ planningStore.eventName || "l'évenement" }}
+          <q-icon name="edit" class="print-hide" size="sm" />
+          <q-popup-edit
+            v-model="planningStore.eventName"
+            auto-save
+            v-slot="scope"
+          >
+            <q-input v-model="scope.value" autofocus @keyup.enter="scope.set" />
+          </q-popup-edit>
+        </span>
+        <span v-if="guiStore.selectedBenevole" class="print-only">
+          pour {{ guiStore.selectedBenevole }}
+        </span>
+      </div>
       <q-btn
         color="primary"
         icon="edit_calendar"
         label="Périodes"
         to="/periodes"
+        class="print-hide"
       />
-      <br />
-      <q-radio v-model="guiStore.selectedBenevole" val="" label="Tous" />
-      <q-radio
-        v-for="benevole in planningStore.benevoles"
-        v-model="guiStore.selectedBenevole"
-        v-bind:key="benevole.id"
-        :val="benevole.name"
-        :label="benevole.name"
+      <q-btn
+        color="primary"
+        icon="manage_accounts"
+        label="Bénévoles"
+        to="/benevoles"
+        class="print-hide"
       />
-      <div class="row">
+
+      <div
+        class="q-ma-md print-hide text-italic text-subtitle1"
+        v-if="
+          planningStore.benevoles.length == 0 &&
+          planningStore.periodes.length == 0
+        "
+      >
+        C'est vide ici ! Ajoute des périodes et des bénévoles pour construire le
+        planning
+      </div>
+
+      <div class="q-pb-md print-hide" v-if="planningStore.benevoles.length > 0">
+        <div class="text-subtitle1">Bénévole</div>
+        <q-radio v-model="guiStore.selectedBenevole" val="" label="Tous" />
+        <q-radio
+          v-for="benevole in planningStore.benevoles"
+          v-model="guiStore.selectedBenevole"
+          v-bind:key="benevole.id"
+          :val="benevole.name"
+          :label="benevole.name"
+        />
+      </div>
+      <div
+        class="q-pb-md print-hide text-italic text-subtitle1"
+        v-else-if="planningStore.periodes.length > 0"
+      >
+        Aucun bénévole
+      </div>
+
+      <div class="row" v-if="planningStore.periodes.length > 0">
         <PlanningPeriode
           v-for="periode in planningStore.periodes"
           :key="periode.id"
           :periode="periode"
         />
+      </div>
+      <div
+        class="q-pb-md print-hide text-italic text-subtitle1"
+        v-else-if="planningStore.benevoles.length > 0"
+      >
+        Aucune période
       </div>
     </div>
   </div>

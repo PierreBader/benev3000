@@ -1,8 +1,13 @@
 <template>
-  <div class="planning-cell" :class="{ selectable }" @click="cellClick">
+  <div
+    class="planningCell"
+    :class="{ selectableCell, selectedCell }"
+    @click="cellClick"
+  >
     <span
       v-for="benevole in benevoles"
       :key="benevole"
+      class="benevole"
       :class="{ selected: benevole == guiStore.selectedBenevole }"
       >{{ benevole }}
     </span>
@@ -40,7 +45,7 @@ const benevoles = computed(() => {
     .map((a) => a.benevole);
 });
 
-const selectable = computed(() => {
+const selectableCell = computed(() => {
   if (!guiStore.selectedBenevole) return false;
   if (benevoles.value.includes(guiStore.selectedBenevole)) return false;
 
@@ -65,6 +70,10 @@ const selectable = computed(() => {
   return benevole.availability.includes(creneauName);
 });
 
+const selectedCell = computed(() => {
+  return benevoles.value.includes(guiStore.selectedBenevole);
+});
+
 function cellClick() {
   if (!guiStore.selectedBenevole) return false;
 
@@ -75,27 +84,45 @@ function cellClick() {
     poste: props.poste,
   };
 
-  if (selectable.value) {
+  if (selectableCell.value) {
     planningStore.addAssignation(assignation);
     return;
   }
 
-  if (benevoles.value.includes(guiStore.selectedBenevole)) {
+  if (selectedCell.value) {
     planningStore.removeAssignation(assignation);
   }
 }
 </script>
 
 <style lang="css" scoped>
-.planning-cell {
+.planningCell {
   min-height: 4em;
   min-width: 6em;
+  max-width: 10em;
+  border: 2px solid transparent;
+  border-radius: 0.4em;
+  padding: 0.2em;
+  margin: 0.2em;
 }
-.selectable {
-  border: 1px solid green;
+.planningCell .benevole {
+  margin-right: 0.5em;
+}
+
+.selectableCell {
+  border: 2px dotted lightgreen;
+}
+
+.selectedCell {
+  border: 2px solid lightgreen;
 }
 
 .selected {
-  background-color: green;
+  /* background-color: green; */
+}
+@media print {
+  .selectableCell {
+    border: 2px solid transparent;
+  }
 }
 </style>

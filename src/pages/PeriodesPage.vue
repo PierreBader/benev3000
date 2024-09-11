@@ -3,10 +3,11 @@
     <div class="row item-start">
       <div class="col-3 item-start">
         <q-btn icon="arrow_back" label="Retour" to="/" />
-        <br />
         <q-list>
-          <q-item-label header>Périodes</q-item-label>
-
+          <q-item-label header>Liste des périodes</q-item-label>
+          <div v-if="store.periodes.length == 0" class="text-italic q-pb-md">
+            Ajoute une première période
+          </div>
           <q-item
             v-for="periode in store.periodes"
             :key="periode.id"
@@ -15,30 +16,49 @@
             :to="'/periodes/' + periode.id"
           >
             <q-item-section>
-              <q-item-label>{{ periode.name }}</q-item-label>
+              <q-item-label>{{
+                periode.name || 'Periode ' + periode.id
+              }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
         <q-btn
           color="primary"
-          icon="date_range"
+          icon="event"
           label="Nouvelle"
-          @click="store.addPeriode()"
+          @click="addPeriode"
         />
       </div>
       <div class="col-9 items-center">
-        <div v-if="!selected">Sélectionne une période</div>
-        <div v-else>
-          Détails de la période
-          <div class="q-pa-md">
-            <div class="q-gutter-md" style="max-width: 600px">
-              <q-input v-model="selected.name" label="Nom" />
+        <div v-if="!selected" class="q-pa-md text-subtitle1 text-italic">
+          Sélectionne une période
+        </div>
+        <div v-else class="q-pa-md">
+          <div class="text-subtitle1">Détails de la période</div>
+          <div class="q-pb-md">
+            <q-btn
+              color="red"
+              icon="event_busy"
+              size="md"
+              label="Supprimer"
+              @click="deletePeriode"
+            />
+          </div>
 
+          <div class="q-gutter-md" style="max-width: 600px">
+            <q-input v-model="selected.name" label="Nom">
+              <template v-slot:prepend>
+                <q-icon name="event" />
+              </template>
+            </q-input>
+
+            <div class="q-pb-md">
+              <div class="text-subtitle1">Postes</div>
               <q-chip
                 v-for="p in selected.postes"
                 :key="p"
                 removable
-                color="primary"
+                color="secondary"
                 text-color="white"
                 @remove="deletePoste(p)"
               >
@@ -47,18 +67,22 @@
               <q-input
                 outlined
                 v-model="poste"
+                color="secondary"
                 @keydown.enter="addPoste"
                 @keydown.delete="deleteLastPoste"
-                hint="Séparer les postes par une espace pour en ajouter plusieurs"
                 label="Ajouter des postes"
+                hint="Exemples : Montage, Catering..."
               >
               </q-input>
+            </div>
 
+            <div class="q-pb-md">
+              <div class="text-subtitle1">Créneaux</div>
               <q-chip
                 v-for="c in selected.creneaux"
                 :key="c"
                 removable
-                color="teal"
+                color="accent"
                 text-color="white"
                 @remove="deleteCreneau(c)"
               >
@@ -67,10 +91,11 @@
               <q-input
                 outlined
                 v-model="creneau"
+                color="accent"
                 @keydown.enter="addCreneau"
                 @keydown.delete="deleteLastCreneau"
                 label="Ajouter des créneaux"
-                hint="Séparer les créneaux par une espace pour en ajouter plusieurs"
+                hint="Exemples : Matin, 13h-14h..."
               >
               </q-input>
             </div>
@@ -84,11 +109,12 @@
 <script setup lang="ts">
 import { usePlanningStore } from 'src/stores/planning';
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { format } from 'quasar';
 const { capitalize } = format;
 
 const route = useRoute();
+const router = useRouter();
 
 const store = usePlanningStore();
 
@@ -105,6 +131,20 @@ const selected = computed(() => {
   const periodeId = +route.params.id;
   return store.periodes.find((p) => p.id == periodeId);
 });
+
+function addPeriode() {
+  const periodeId = store.addPeriode();
+
+  router.replace({ path: '/periodes/' + periodeId });
+}
+
+function deletePeriode() {
+  if (route.params.id) {
+    store.deletePeriode(+route.params.id);
+  }
+
+  router.replace({ path: '/periodes' });
+}
 
 function addPoste() {
   poste.value

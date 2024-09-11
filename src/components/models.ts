@@ -10,7 +10,6 @@ export interface Meta {
 export interface Benevole {
   id: number;
   name: string;
-  email: string;
   postes: string[];
   availability: string[];
 }
