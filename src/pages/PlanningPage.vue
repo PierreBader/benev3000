@@ -18,20 +18,26 @@
           pour {{ guiStore.selectedBenevole }}
         </span>
       </div>
-      <q-btn
-        color="primary"
-        icon="edit_calendar"
-        label="Périodes"
-        to="/periodes"
-        class="print-hide"
-      />
-      <q-btn
-        color="primary"
-        icon="manage_accounts"
-        label="Bénévoles"
-        to="/benevoles"
-        class="print-hide"
-      />
+      <div class="print-hide">
+        <q-btn-group push class="q-mr-md">
+          <q-btn
+            color="primary"
+            icon="edit_calendar"
+            label="Périodes"
+            to="/periodes"
+          />
+          <q-btn
+            color="primary"
+            icon="manage_accounts"
+            label="Bénévoles"
+            to="/benevoles"
+          />
+        </q-btn-group>
+        <q-btn-group push>
+          <q-btn color="primary" outline icon="upload" label="Importer" />
+          <q-btn color="primary" outline icon="download" label="Exporter" />
+        </q-btn-group>
+      </div>
 
       <div
         class="q-ma-md print-hide text-italic text-subtitle1"
