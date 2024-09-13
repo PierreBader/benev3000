@@ -1,8 +1,11 @@
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { defineStore } from 'pinia';
+import { db } from 'src/boot/firebase';
 import { Assignation, Benevole, Periode } from 'src/components/models';
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
+    firebaseId: '',
     eventName: '',
     benevoles: [] as Benevole[],
     periodes: [] as Periode[],
@@ -28,6 +31,56 @@ export const usePlanningStore = defineStore('planning', {
   },
 
   actions: {
+    async initEventSync(eventId: string) {
+      const docRef = doc(db, 'events', eventId);
+      this.firebaseId = eventId;
+
+      onSnapshot(docRef, (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          this.eventName = docSnapshot.data().eventName;
+
+          this.benevoles = docSnapshot.data().benevoles;
+          this.periodes = docSnapshot.data().periodes;
+          this.assignations = docSnapshot.data().assignations;
+        }
+      });
+    },
+
+    async updateEvent() {
+      const docRef = doc(db, 'events', this.firebaseId);
+
+      await updateDoc(docRef, {
+        eventName: this.eventName,
+        benevoles: this.benevoles,
+        periodes: this.periodes,
+        assignations: this.assignations,
+      });
+    },
+
+    async updateBenevoles() {
+      const docRef = doc(db, 'events', this.firebaseId);
+
+      await updateDoc(docRef, {
+        benevoles: this.benevoles,
+      });
+    },
+
+    async updatePeriodes() {
+      const docRef = doc(db, 'events', this.firebaseId);
+
+      await updateDoc(docRef, {
+        periodes: this.periodes,
+      });
+    },
+
+    async updateAssignations() {
+      const docRef = doc(db, 'events', this.firebaseId);
+
+      await updateDoc(docRef, {
+        assignations: this.assignations,
+      });
+    },
+
     addBenevole() {
       let id = 1;
       if (this.benevoles.length > 0)
@@ -40,11 +93,14 @@ export const usePlanningStore = defineStore('planning', {
         availability: [],
       });
 
+      this.updateEvent();
+
       return id;
     },
 
     deleteBenevole(id: number) {
       this.benevoles = this.benevoles.filter((b) => b.id != id);
+      this.updateEvent();
     },
 
     addPeriode() {
@@ -58,12 +114,14 @@ export const usePlanningStore = defineStore('planning', {
         creneaux: [],
         postes: [],
       });
+      this.updateEvent();
 
       return id;
     },
 
     deletePeriode(id: number) {
       this.periodes = this.periodes.filter((b) => b.id != id);
+      this.updateEvent();
     },
 
     removeAssignation(assignation: Assignation) {
@@ -74,10 +132,12 @@ export const usePlanningStore = defineStore('planning', {
           a.creneau != assignation.creneau ||
           a.poste != assignation.poste
       );
+      this.updateEvent();
     },
 
     addAssignation(assignation: Assignation) {
       this.assignations.push(assignation);
+      this.updateEvent();
     },
   },
 });

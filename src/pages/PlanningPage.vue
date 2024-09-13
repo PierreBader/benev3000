@@ -11,7 +11,14 @@
             auto-save
             v-slot="scope"
           >
-            <q-input v-model="scope.value" autofocus @keyup.enter="scope.set" />
+            <q-input
+              v-model="scope.value"
+              autofocus
+              @keyup.enter="
+                scope.set();
+                planningStore.updateEvent();
+              "
+            />
           </q-popup-edit>
         </span>
         <span v-if="guiStore.selectedBenevole" class="print-only">
@@ -48,15 +55,18 @@
       <div
         class="q-ma-md print-hide text-italic text-subtitle1"
         v-if="
-          planningStore.benevoles.length == 0 &&
-          planningStore.periodes.length == 0
+          (!planningStore.benevoles || planningStore.benevoles.length == 0) &&
+          (!planningStore.periodes || planningStore.periodes.length == 0)
         "
       >
         C'est vide ici ! Ajoute des périodes et des bénévoles pour construire le
         planning
       </div>
 
-      <div class="q-pb-md print-hide" v-if="planningStore.benevoles.length > 0">
+      <div
+        class="q-pb-md print-hide"
+        v-if="planningStore.benevoles && planningStore.benevoles.length > 0"
+      >
         <div class="text-subtitle1">Bénévole</div>
         <q-radio v-model="guiStore.selectedBenevole" val="" label="Tous" />
         <q-radio
@@ -69,12 +79,15 @@
       </div>
       <div
         class="q-pb-md print-hide text-italic text-subtitle1"
-        v-else-if="planningStore.periodes.length > 0"
+        v-else-if="planningStore.periodes && planningStore.periodes.length > 0"
       >
         Aucun bénévole
       </div>
 
-      <div class="row" v-if="planningStore.periodes.length > 0">
+      <div
+        class="row"
+        v-if="planningStore.periodes && planningStore.periodes.length > 0"
+      >
         <PlanningPeriode
           v-for="periode in planningStore.periodes"
           :key="periode.id"
@@ -83,7 +96,9 @@
       </div>
       <div
         class="q-pb-md print-hide text-italic text-subtitle1"
-        v-else-if="planningStore.benevoles.length > 0"
+        v-else-if="
+          planningStore.benevoles && planningStore.benevoles.length > 0
+        "
       >
         Aucune période
       </div>
@@ -95,6 +110,8 @@
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
+import { onMounted } from 'vue';
+
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
 
@@ -116,4 +133,8 @@ function saveFile() {
   link.click();
   URL.revokeObjectURL(link.href);
 }
+
+onMounted(() => {
+  planningStore.initEventSync('DO9wqSWxVS3DI6m7sQOH');
+});
 </script>

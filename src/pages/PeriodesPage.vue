@@ -46,7 +46,11 @@
           </div>
 
           <div class="q-gutter-md" style="max-width: 600px">
-            <q-input v-model="selected.name" label="Nom">
+            <q-input
+              v-model="selected.name"
+              label="Nom"
+              @blur="store.updatePeriodes()"
+            >
               <template v-slot:prepend>
                 <q-icon name="event" />
               </template>
@@ -69,6 +73,7 @@
                 v-model="poste"
                 color="secondary"
                 @keydown.enter="addPoste"
+                @blur="addPoste"
                 @keydown.delete="deleteLastPoste"
                 label="Ajouter des postes"
                 hint="Exemples : Montage, Catering..."
@@ -93,6 +98,7 @@
                 v-model="creneau"
                 color="accent"
                 @keydown.enter="addCreneau"
+                @blur="addCreneau"
                 @keydown.delete="deleteLastCreneau"
                 label="Ajouter des créneaux"
                 hint="Exemples : Matin, 13h-14h..."
@@ -157,17 +163,23 @@ function addPoste() {
     });
 
   poste.value = '';
+
+  store.updatePeriodes();
 }
 
 function deleteLastPoste() {
   if (poste.value) return;
   if (selected.value?.postes.length == 0) return;
   selected.value?.postes.pop();
+
+  store.updatePeriodes();
 }
 
 function deletePoste(poste: string) {
   if (!selected.value) return;
   selected.value.postes = selected.value.postes.filter((p) => p != poste);
+
+  store.updatePeriodes();
 }
 
 function addCreneau() {
@@ -180,6 +192,8 @@ function addCreneau() {
     });
 
   creneau.value = '';
+
+  store.updatePeriodes();
 }
 
 function deleteLastCreneau() {
@@ -187,10 +201,14 @@ function deleteLastCreneau() {
   if (!selected.value) return;
   if (selected.value.creneaux.length == 0) return;
   selected.value.creneaux.pop();
+
+  store.updatePeriodes();
 }
 
 function deleteCreneau(creneau: string) {
   if (!selected.value) return;
   selected.value.creneaux = selected.value.creneaux.filter((c) => c != creneau);
+
+  store.updatePeriodes();
 }
 </script>

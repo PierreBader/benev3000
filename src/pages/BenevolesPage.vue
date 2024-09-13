@@ -44,7 +44,11 @@
           </div>
 
           <div class="q-gutter-md" style="max-width: 400px">
-            <q-input v-model="selected.name" label="Nom" />
+            <q-input
+              v-model="selected.name"
+              label="Nom"
+              @blur="store.updateBenevoles()"
+            />
 
             <div class="q-pb-md">
               <div class="text-subtitle1">Postes</div>
@@ -56,6 +60,7 @@
                 color="secondary"
                 v-model="selected.postes"
                 :options="postOptions"
+                @update:model-value="store.updateBenevoles()"
                 type="checkbox"
               />
               <div v-else class="text-italic">
@@ -77,6 +82,7 @@
                 v-model:ticked="selected.availability"
                 default-expand-all
                 color="accent"
+                @update:ticked="store.updateBenevoles()"
               />
               <div v-else class="text-italic">
                 Ajoute une période avec des créneaux pour les afficher
@@ -135,6 +141,8 @@ function addBenevole() {
   const benevoleId = store.addBenevole();
 
   router.replace({ path: '/benevoles/' + benevoleId });
+
+  store.updateBenevoles();
 }
 
 function deleteBenevole() {
@@ -143,5 +151,7 @@ function deleteBenevole() {
   }
 
   router.replace({ path: '/benevoles' });
+
+  store.updateBenevoles();
 }
 </script>
