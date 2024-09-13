@@ -2,11 +2,15 @@ import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { defineStore } from 'pinia';
 import { db } from 'src/boot/firebase';
 import { Assignation, Benevole, Periode } from 'src/components/models';
+import { hashSync } from 'bcryptjs';
+
+import { useGuiStore } from './gui';
 
 export const usePlanningStore = defineStore('planning', {
   state: () => ({
     firebaseId: '',
     eventName: '',
+    eventHash: '',
     benevoles: [] as Benevole[],
     periodes: [] as Periode[],
     assignations: [] as Assignation[],
@@ -15,14 +19,6 @@ export const usePlanningStore = defineStore('planning', {
   getters: {
     allPostes: (state) => {
       return [...new Set(state.periodes.flatMap((b) => b.postes))];
-    },
-    export: (state) => {
-      return {
-        eventName: state.eventName,
-        benevoles: state.benevoles,
-        periodes: state.periodes,
-        assignations: state.assignations,
-      };
     },
   },
 
@@ -34,6 +30,7 @@ export const usePlanningStore = defineStore('planning', {
     async initEventSync(eventId: string) {
       const docRef = doc(db, 'events', eventId);
       this.firebaseId = eventId;
+      const gui = useGuiStore();
 
       onSnapshot(docRef, (docSnapshot) => {
         if (docSnapshot.exists()) {
@@ -42,13 +39,16 @@ export const usePlanningStore = defineStore('planning', {
           this.benevoles = docSnapshot.data().benevoles;
           this.periodes = docSnapshot.data().periodes;
           this.assignations = docSnapshot.data().assignations;
+          this.eventHash = docSnapshot.data().eventHash;
         }
       });
 
       try {
         const docSnapshot = await getDoc(docRef);
 
-        if (!docSnapshot.exists()) {
+        if (docSnapshot.exists()) {
+          gui.eventLoaded = true;
+        } else {
           this.resetEvent();
         }
       } catch (error) {
@@ -57,10 +57,12 @@ export const usePlanningStore = defineStore('planning', {
     },
 
     resetEvent() {
+      const gui = useGuiStore();
       this.eventName = '';
       this.benevoles = [];
       this.periodes = [];
       this.assignations = [];
+      gui.eventLoaded = false;
     },
 
     async updateEvent() {
@@ -71,6 +73,7 @@ export const usePlanningStore = defineStore('planning', {
         benevoles: this.benevoles,
         periodes: this.periodes,
         assignations: this.assignations,
+        eventHash: this.eventHash,
       });
     },
 
@@ -155,6 +158,14 @@ export const usePlanningStore = defineStore('planning', {
     addAssignation(assignation: Assignation) {
       this.assignations.push(assignation);
       this.updateEvent();
+    },
+
+    async setEventHash(password: string) {
+      const docRef = doc(db, 'events', this.firebaseId);
+
+      await updateDoc(docRef, {
+        eventHash: hashSync(password, 10),
+      });
     },
   },
 });

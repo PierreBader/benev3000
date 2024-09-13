@@ -1,19 +1,29 @@
 <template>
-  <div class="q-pa-md">
+  <div
+    class="q-pa-md"
+    v-if="guiStore.eventLoaded && guiStore.eventWriteAllowed"
+  >
     <div class="row item-start">
       <div class="col-3 item-start">
-        <q-btn icon="arrow_back" label="Retour" :to="'/' + store.firebaseId" />
+        <q-btn
+          icon="arrow_back"
+          label="Retour"
+          :to="'/' + planningStore.firebaseId"
+        />
         <q-list>
           <q-item-label header>Liste des périodes</q-item-label>
-          <div v-if="store.periodes.length == 0" class="text-italic q-pb-md">
+          <div
+            v-if="planningStore.periodes.length == 0"
+            class="text-italic q-pb-md"
+          >
             Ajoute une première période
           </div>
           <q-item
-            v-for="periode in store.periodes"
+            v-for="periode in planningStore.periodes"
             :key="periode.id"
             clickable
             tag="a"
-            :to="'/' + store.firebaseId + '/periodes/' + periode.id"
+            :to="'/' + planningStore.firebaseId + '/periodes/' + periode.id"
           >
             <q-item-section>
               <q-item-label>{{
@@ -49,7 +59,7 @@
             <q-input
               v-model="selected.name"
               label="Nom"
-              @blur="store.updatePeriodes()"
+              @blur="planningStore.updatePeriodes()"
             >
               <template v-slot:prepend>
                 <q-icon name="event" />
@@ -117,12 +127,14 @@ import { usePlanningStore } from 'src/stores/planning';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { format } from 'quasar';
+import { useGuiStore } from 'src/stores/gui';
 const { capitalize } = format;
 
 const route = useRoute();
 const router = useRouter();
 
-const store = usePlanningStore();
+const planningStore = usePlanningStore();
+const guiStore = useGuiStore();
 
 defineOptions({
   name: 'PeriodesPage',
@@ -135,21 +147,23 @@ const selected = computed(() => {
   if (!route.params.id) return null;
 
   const periodeId = +route.params.id;
-  return store.periodes.find((p) => p.id == periodeId);
+  return planningStore.periodes.find((p) => p.id == periodeId);
 });
 
 function addPeriode() {
-  const periodeId = store.addPeriode();
+  const periodeId = planningStore.addPeriode();
 
-  router.replace({ path: '/' + store.firebaseId + '/periodes/' + periodeId });
+  router.replace({
+    path: '/' + planningStore.firebaseId + '/periodes/' + periodeId,
+  });
 }
 
 function deletePeriode() {
   if (route.params.id) {
-    store.deletePeriode(+route.params.id);
+    planningStore.deletePeriode(+route.params.id);
   }
 
-  router.replace({ path: '/' + store.firebaseId + '/periodes' });
+  router.replace({ path: '/' + planningStore.firebaseId + '/periodes' });
 }
 
 function addPoste() {
@@ -164,7 +178,7 @@ function addPoste() {
 
   poste.value = '';
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 
 function deleteLastPoste() {
@@ -172,14 +186,14 @@ function deleteLastPoste() {
   if (selected.value?.postes.length == 0) return;
   selected.value?.postes.pop();
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 
 function deletePoste(poste: string) {
   if (!selected.value) return;
   selected.value.postes = selected.value.postes.filter((p) => p != poste);
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 
 function addCreneau() {
@@ -193,7 +207,7 @@ function addCreneau() {
 
   creneau.value = '';
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 
 function deleteLastCreneau() {
@@ -202,13 +216,13 @@ function deleteLastCreneau() {
   if (selected.value.creneaux.length == 0) return;
   selected.value.creneaux.pop();
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 
 function deleteCreneau(creneau: string) {
   if (!selected.value) return;
   selected.value.creneaux = selected.value.creneaux.filter((c) => c != creneau);
 
-  store.updatePeriodes();
+  planningStore.updatePeriodes();
 }
 </script>

@@ -47,6 +47,8 @@ const benevoles = computed(() => {
 
 const selectableCell = computed(() => {
   if (!guiStore.selectedBenevole) return false;
+  if (!guiStore.eventWriteAllowed) return false;
+
   if (benevoles.value.includes(guiStore.selectedBenevole)) return false;
 
   const benevole = planningStore.benevoles.find(
@@ -76,6 +78,7 @@ const selectedCell = computed(() => {
 
 function cellClick() {
   if (!guiStore.selectedBenevole) return false;
+  if (!guiStore.eventWriteAllowed) return false;
 
   const assignation: Assignation = {
     benevole: guiStore.selectedBenevole,

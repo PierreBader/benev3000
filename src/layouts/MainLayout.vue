@@ -1,7 +1,9 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar
+        :class="guiStore.eventWriteAllowed ? 'bg-purple' : 'bg-primary'"
+      >
         <q-toolbar-title> Benev 3000 </q-toolbar-title>
 
         <div>Place ton bénévole</div>
@@ -15,7 +17,11 @@
 </template>
 
 <script setup lang="ts">
+import { useGuiStore } from 'src/stores/gui';
+
 defineOptions({
   name: 'MainLayout',
 });
+
+const guiStore = useGuiStore();
 </script>

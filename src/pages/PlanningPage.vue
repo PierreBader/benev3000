@@ -1,15 +1,21 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-md" v-if="guiStore.eventLoaded">
     <div class="q-gutter-sm">
       <div class="text-h4">
         Planning de
         <span class="cursor-pointer">
           {{ planningStore.eventName || "l'évenement" }}
-          <q-icon name="edit" class="print-hide" size="sm" />
+          <q-icon
+            name="edit"
+            class="print-hide"
+            size="sm"
+            v-if="guiStore.eventWriteAllowed"
+          />
           <q-popup-edit
             v-model="planningStore.eventName"
             auto-save
             v-slot="scope"
+            v-if="guiStore.eventWriteAllowed"
           >
             <q-input
               v-model="scope.value"
@@ -25,7 +31,7 @@
           pour {{ guiStore.selectedBenevole }}
         </span>
       </div>
-      <div class="print-hide">
+      <div class="print-hide" v-if="guiStore.eventWriteAllowed">
         <q-btn-group push class="q-mr-md">
           <q-btn
             color="primary"
@@ -38,16 +44,6 @@
             icon="manage_accounts"
             label="Bénévoles"
             :to="'/' + planningStore.firebaseId + '/benevoles'"
-          />
-        </q-btn-group>
-        <q-btn-group>
-          <q-btn color="primary" outline icon="upload" label="Importer" />
-          <q-btn
-            color="primary"
-            outline
-            icon="download"
-            label="Exporter"
-            @click="saveFile"
           />
         </q-btn-group>
       </div>
@@ -111,30 +107,16 @@ import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
 import { onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
 const route = useRoute();
+const router = useRouter();
 
 defineOptions({
   name: 'PlanningPage',
 });
-
-function saveFile() {
-  const data = JSON.stringify(planningStore.export);
-  const blob = new Blob([data], { type: 'application/b3k' });
-  const link = document.createElement('a');
-
-  if (planningStore.eventName) {
-    link.download = planningStore.eventName + '.b3k';
-  } else {
-    link.download = 'event.b3k';
-  }
-  link.href = URL.createObjectURL(blob);
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
 
 onMounted(() => {
   syncEvent();
@@ -147,7 +129,7 @@ watch(
   }
 );
 
-function syncEvent() {
+async function syncEvent() {
   if (!route.params.eventId) return;
 
   let eventId =
@@ -155,6 +137,10 @@ function syncEvent() {
       ? route.params.eventId
       : route.params.eventId[0];
 
-  planningStore.initEventSync(eventId);
+  await planningStore.initEventSync(eventId);
+
+  if (!guiStore.eventLoaded) {
+    router.replace('/');
+  }
 }
 </script>

@@ -1,19 +1,29 @@
 <template>
-  <div class="q-pa-md">
+  <div
+    class="q-pa-md"
+    v-if="guiStore.eventLoaded && guiStore.eventWriteAllowed"
+  >
     <div class="row item-start">
       <div class="col-3 item-start">
-        <q-btn icon="arrow_back" label="Retour" :to="'/' + store.firebaseId" />
+        <q-btn
+          icon="arrow_back"
+          label="Retour"
+          :to="'/' + planningStore.firebaseId"
+        />
         <q-list>
           <q-item-label header>Liste des bénévoles</q-item-label>
-          <div v-if="store.benevoles.length == 0" class="text-italic q-pb-md">
+          <div
+            v-if="planningStore.benevoles.length == 0"
+            class="text-italic q-pb-md"
+          >
             Ajoute un premier bénévole
           </div>
           <q-item
-            v-for="benevole in store.benevoles"
+            v-for="benevole in planningStore.benevoles"
             :key="benevole.id"
             clickable
             tag="a"
-            :to="'/' + store.firebaseId + '/benevoles' + benevole.id"
+            :to="'/' + planningStore.firebaseId + '/benevoles/' + benevole.id"
           >
             <q-item-section>
               <q-item-label>{{ benevole.name }}</q-item-label>
@@ -47,7 +57,7 @@
             <q-input
               v-model="selected.name"
               label="Nom"
-              @blur="store.updateBenevoles()"
+              @blur="planningStore.updateBenevoles()"
             />
 
             <div class="q-pb-md">
@@ -56,11 +66,11 @@
                 Postes où {{ selected.name }} voudrait être assigné
               </div>
               <q-option-group
-                v-if="store.allPostes.length > 0"
+                v-if="planningStore.allPostes.length > 0"
                 color="secondary"
                 v-model="selected.postes"
                 :options="postOptions"
-                @update:model-value="store.updateBenevoles()"
+                @update:model-value="planningStore.updateBenevoles()"
                 type="checkbox"
               />
               <div v-else class="text-italic">
@@ -74,7 +84,7 @@
                 Créneaux où {{ selected.name }} est disponible
               </div>
               <q-tree
-                v-if="store.periodes.length > 0"
+                v-if="planningStore.periodes.length > 0"
                 class="col-12 col-sm-6"
                 :nodes="creneauxNodes"
                 node-key="label"
@@ -82,7 +92,7 @@
                 v-model:ticked="selected.availability"
                 default-expand-all
                 color="accent"
-                @update:ticked="store.updateBenevoles()"
+                @update:ticked="planningStore.updateBenevoles()"
               />
               <div v-else class="text-italic">
                 Ajoute une période avec des créneaux pour les afficher
@@ -96,6 +106,7 @@
 </template>
 
 <script setup lang="ts">
+import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -103,7 +114,8 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-const store = usePlanningStore();
+const planningStore = usePlanningStore();
+const guiStore = useGuiStore();
 
 defineOptions({
   name: 'BenevolesPage',
@@ -113,12 +125,12 @@ const selected = computed(() => {
   if (!route.params.id) return null;
 
   const benevoleId = +route.params.id;
-  return store.benevoles.find((b) => b.id == benevoleId);
+  return planningStore.benevoles.find((b) => b.id == benevoleId);
 });
 
 const postOptions = computed(() => {
-  if (store.allPostes.length === 0) return [];
-  return store.allPostes.map((p) => {
+  if (planningStore.allPostes.length === 0) return [];
+  return planningStore.allPostes.map((p) => {
     return {
       label: p!,
       value: p!,
@@ -127,7 +139,7 @@ const postOptions = computed(() => {
 });
 
 const creneauxNodes = computed(() => {
-  return store.periodes.map((p) => {
+  return planningStore.periodes.map((p) => {
     return {
       label: p.name,
       children: p.creneaux.map((c) => {
@@ -138,20 +150,22 @@ const creneauxNodes = computed(() => {
 });
 
 function addBenevole() {
-  const benevoleId = store.addBenevole();
+  const benevoleId = planningStore.addBenevole();
 
-  router.replace({ path: '/' + store.firebaseId + '/benevoles/' + benevoleId });
+  router.replace({
+    path: '/' + planningStore.firebaseId + '/benevoles/' + benevoleId,
+  });
 
-  store.updateBenevoles();
+  planningStore.updateBenevoles();
 }
 
 function deleteBenevole() {
   if (route.params.id) {
-    store.deleteBenevole(+route.params.id);
+    planningStore.deleteBenevole(+route.params.id);
   }
 
-  router.replace({ path: '/' + store.firebaseId + '/benevoles' });
+  router.replace({ path: '/' + planningStore.firebaseId + '/benevoles' });
 
-  store.updateBenevoles();
+  planningStore.updateBenevoles();
 }
 </script>
