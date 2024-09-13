@@ -31,13 +31,13 @@
             color="primary"
             icon="edit_calendar"
             label="Périodes"
-            to="/periodes"
+            :to="'/' + planningStore.firebaseId + '/periodes'"
           />
           <q-btn
             color="primary"
             icon="manage_accounts"
             label="Bénévoles"
-            to="/benevoles"
+            :to="'/' + planningStore.firebaseId + '/benevoles'"
           />
         </q-btn-group>
         <q-btn-group>
@@ -110,10 +110,12 @@
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
+const route = useRoute();
 
 defineOptions({
   name: 'PlanningPage',
@@ -135,6 +137,24 @@ function saveFile() {
 }
 
 onMounted(() => {
-  planningStore.initEventSync('DO9wqSWxVS3DI6m7sQOH');
+  syncEvent();
 });
+
+watch(
+  () => route.params.eventId,
+  () => {
+    syncEvent();
+  }
+);
+
+function syncEvent() {
+  if (!route.params.eventId) return;
+
+  let eventId =
+    typeof route.params.eventId == 'string'
+      ? route.params.eventId
+      : route.params.eventId[0];
+
+  planningStore.initEventSync(eventId);
+}
 </script>

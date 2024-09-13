@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="row item-start">
       <div class="col-3 item-start">
-        <q-btn icon="arrow_back" label="Retour" to="/" />
+        <q-btn icon="arrow_back" label="Retour" :to="'/' + store.firebaseId" />
         <q-list>
           <q-item-label header>Liste des périodes</q-item-label>
           <div v-if="store.periodes.length == 0" class="text-italic q-pb-md">
@@ -13,7 +13,7 @@
             :key="periode.id"
             clickable
             tag="a"
-            :to="'/periodes/' + periode.id"
+            :to="'/' + store.firebaseId + '/periodes/' + periode.id"
           >
             <q-item-section>
               <q-item-label>{{
@@ -141,7 +141,7 @@ const selected = computed(() => {
 function addPeriode() {
   const periodeId = store.addPeriode();
 
-  router.replace({ path: '/periodes/' + periodeId });
+  router.replace({ path: '/' + store.firebaseId + '/periodes/' + periodeId });
 }
 
 function deletePeriode() {
@@ -149,7 +149,7 @@ function deletePeriode() {
     store.deletePeriode(+route.params.id);
   }
 
-  router.replace({ path: '/periodes' });
+  router.replace({ path: '/' + store.firebaseId + '/periodes' });
 }
 
 function addPoste() {

@@ -5,20 +5,25 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PlanningPage.vue') },
       {
-        path: 'benevoles',
-        component: () => import('pages/BenevolesPage.vue'),
-        children: [
-          { path: ':id', component: () => import('pages/BenevolesPage.vue') },
-        ],
+        path: ':eventId',
+        component: () => import('pages/PlanningPage.vue'),
       },
       {
-        path: 'periodes',
+        path: ':eventId/benevoles',
+        component: () => import('pages/BenevolesPage.vue'),
+      },
+      {
+        path: ':eventId/benevoles/:id',
+        component: () => import('pages/BenevolesPage.vue'),
+      },
+      {
+        path: ':eventId/periodes',
         component: () => import('pages/PeriodesPage.vue'),
-        children: [
-          { path: ':id', component: () => import('pages/PeriodesPage.vue') },
-        ],
+      },
+      {
+        path: ':eventId/periodes/:id',
+        component: () => import('pages/PeriodesPage.vue'),
       },
     ],
   },

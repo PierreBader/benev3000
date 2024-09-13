@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="row item-start">
       <div class="col-3 item-start">
-        <q-btn icon="arrow_back" label="Retour" to="/" />
+        <q-btn icon="arrow_back" label="Retour" :to="'/' + store.firebaseId" />
         <q-list>
           <q-item-label header>Liste des bénévoles</q-item-label>
           <div v-if="store.benevoles.length == 0" class="text-italic q-pb-md">
@@ -13,7 +13,7 @@
             :key="benevole.id"
             clickable
             tag="a"
-            :to="'/benevoles/' + benevole.id"
+            :to="'/' + store.firebaseId + '/benevoles' + benevole.id"
           >
             <q-item-section>
               <q-item-label>{{ benevole.name }}</q-item-label>
@@ -140,7 +140,7 @@ const creneauxNodes = computed(() => {
 function addBenevole() {
   const benevoleId = store.addBenevole();
 
-  router.replace({ path: '/benevoles/' + benevoleId });
+  router.replace({ path: '/' + store.firebaseId + '/benevoles/' + benevoleId });
 
   store.updateBenevoles();
 }
@@ -150,7 +150,7 @@ function deleteBenevole() {
     store.deleteBenevole(+route.params.id);
   }
 
-  router.replace({ path: '/benevoles' });
+  router.replace({ path: '/' + store.firebaseId + '/benevoles' });
 
   store.updateBenevoles();
 }

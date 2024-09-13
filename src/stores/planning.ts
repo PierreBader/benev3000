@@ -1,4 +1,4 @@
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { defineStore } from 'pinia';
 import { db } from 'src/boot/firebase';
 import { Assignation, Benevole, Periode } from 'src/components/models';
@@ -44,6 +44,23 @@ export const usePlanningStore = defineStore('planning', {
           this.assignations = docSnapshot.data().assignations;
         }
       });
+
+      try {
+        const docSnapshot = await getDoc(docRef);
+
+        if (!docSnapshot.exists()) {
+          this.resetEvent();
+        }
+      } catch (error) {
+        this.resetEvent();
+      }
+    },
+
+    resetEvent() {
+      this.eventName = '';
+      this.benevoles = [];
+      this.periodes = [];
+      this.assignations = [];
     },
 
     async updateEvent() {
