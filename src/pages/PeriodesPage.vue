@@ -60,6 +60,14 @@
                 :disable="isLast"
               />
             </q-btn-group>
+            <q-btn-group push class="q-mr-md">
+              <q-btn
+                color="primary"
+                icon="file_copy"
+                @click="copyPeriode"
+                label="Dupliquer"
+              />
+            </q-btn-group>
             <q-btn
               color="negative"
               icon="event_busy"
@@ -142,6 +150,7 @@ import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { format } from 'quasar';
 import { useGuiStore } from 'src/stores/gui';
+import { Periode } from 'src/components/models';
 const { capitalize } = format;
 
 const route = useRoute();
@@ -169,6 +178,20 @@ function addPeriode() {
 
   router.replace({
     path: '/' + planningStore.firebaseId + '/periodes/' + periodeId,
+  });
+}
+
+function copyPeriode() {
+  if (!route.params.id) return null;
+  const periodeId = +route.params.id;
+  const current: Periode = planningStore.periodes.find(
+    (p) => p.id == periodeId
+  )!;
+
+  const newPeriodeId = planningStore.copyPeriode(current);
+
+  router.replace({
+    path: '/' + planningStore.firebaseId + '/periodes/' + newPeriodeId,
   });
 }
 

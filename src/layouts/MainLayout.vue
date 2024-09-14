@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar v-if="guiStore.eventWriteAllowed" class="bg-accent">
+      <q-toolbar v-if="guiStore.eventWriteAllowed" class="bg-accent print-hide">
         <q-toolbar-title> Benev 3000 </q-toolbar-title>
 
         <q-chip
@@ -14,7 +14,7 @@
         </q-chip>
       </q-toolbar>
 
-      <q-toolbar v-else class="bg-primary">
+      <q-toolbar v-else class="bg-primary print-hide">
         <q-toolbar-title> Benev 3000 </q-toolbar-title>
 
         <q-chip color="accent" text-color="white">

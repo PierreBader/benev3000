@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card class="q-ma-sm">
     <q-card-section>
       <div class="text-h6">{{ periode.name }}</div>
     </q-card-section>
@@ -71,7 +71,20 @@ defineProps<Props>();
     td,
     th {
       border-right: 1px solid gray;
+      border-bottom: 1px solid gray;
     }
+  }
+}
+@media print {
+  .planningPeriode {
+    font-size: 8px;
+  }
+  .q-card__section--vert {
+    padding: 8px;
+  }
+  .text-h6 {
+    font-size: 14px;
+    line-height: 1.5;
   }
 }
 </style>

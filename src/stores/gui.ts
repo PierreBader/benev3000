@@ -7,7 +7,7 @@ export const useGuiStore = defineStore('gui', {
     selectedBenevole: '',
     selectedPeriode: '',
     eventLoaded: false,
-    eventPass: 'toto',
+    eventPass: '',
   }),
 
   getters: {

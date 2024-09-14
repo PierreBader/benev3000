@@ -4,13 +4,14 @@
     :class="{ selectableCell, selectedCell }"
     @click="cellClick"
   >
-    <span
+    <div
       v-for="benevole in benevoles"
       :key="benevole"
       class="benevole"
       :class="{ selected: benevole == guiStore.selectedBenevole }"
-      >{{ benevole }}
-    </span>
+    >
+      {{ benevole }}
+    </div>
   </div>
 </template>
 
@@ -98,7 +99,7 @@ function cellClick() {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .planningCell {
   min-height: 4em;
   min-width: 6em;
@@ -107,9 +108,11 @@ function cellClick() {
   border-radius: 0.4em;
   padding: 0.2em;
   margin: 0.2em;
-}
-.planningCell .benevole {
-  margin-right: 0.5em;
+
+  .benevole {
+    margin-right: 0.5em;
+    white-space: nowrap;
+  }
 }
 
 .selectableCell {
@@ -124,8 +127,7 @@ function cellClick() {
   /* background-color: green; */
 }
 @media print {
-  .selectableCell {
-    border: 2px solid transparent;
+  .planningCell {
   }
 }
 </style>

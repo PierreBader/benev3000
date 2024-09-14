@@ -44,6 +44,14 @@
         <div v-else class="q-pa-md">
           <div class="text-subtitle1">Détails du bénévole</div>
           <div class="q-pb-md">
+            <q-btn-group push class="q-mr-md">
+              <q-btn
+                color="primary"
+                icon="file_copy"
+                @click="copyBenevole"
+                label="Dupliquer"
+              />
+            </q-btn-group>
             <q-btn
               color="negative"
               icon="person_remove"
@@ -106,6 +114,7 @@
 </template>
 
 <script setup lang="ts">
+import { Benevole } from 'src/components/models';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
 import { computed } from 'vue';
@@ -157,6 +166,20 @@ function addBenevole() {
   });
 
   planningStore.updateBenevoles();
+}
+
+function copyBenevole() {
+  if (!route.params.id) return null;
+  const benevoleId = +route.params.id;
+  const current: Benevole = planningStore.benevoles.find(
+    (b) => b.id == benevoleId
+  )!;
+
+  const newBenevoleId = planningStore.copyBenevole(current);
+
+  router.replace({
+    path: '/' + planningStore.firebaseId + '/benevoles/' + newBenevoleId,
+  });
 }
 
 function deleteBenevole() {

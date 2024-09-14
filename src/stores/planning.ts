@@ -122,6 +122,23 @@ export const usePlanningStore = defineStore('planning', {
       return id;
     },
 
+    copyBenevole(benevole: Benevole) {
+      let id = 1;
+      if (this.benevoles.length > 0)
+        id = this.benevoles.map((b) => b.id).sort((a, b) => b - a)[0] + 1;
+
+      this.benevoles.push({
+        id: id,
+        name: 'Bénévole ' + id,
+        postes: benevole.postes,
+        availability: benevole.availability,
+      });
+
+      this.updateEvent();
+
+      return id;
+    },
+
     deleteBenevole(id: number) {
       this.benevoles = this.benevoles.filter((b) => b.id != id);
       this.updateEvent();
@@ -137,6 +154,22 @@ export const usePlanningStore = defineStore('planning', {
         name: 'Période ' + id,
         creneaux: [],
         postes: [],
+      });
+      this.updateEvent();
+
+      return id;
+    },
+
+    copyPeriode(periode: Periode) {
+      let id = 1;
+      if (this.periodes.length > 0)
+        id = this.periodes.map((b) => b.id).sort((a, b) => b - a)[0] + 1;
+
+      this.periodes.push({
+        id: id,
+        name: 'Période ' + id,
+        creneaux: periode.creneaux,
+        postes: periode.postes,
       });
       this.updateEvent();
 
