@@ -46,6 +46,20 @@
         <div v-else class="q-pa-md">
           <div class="text-subtitle1">Détails de la période</div>
           <div class="q-pb-md">
+            <q-btn-group push class="q-mr-md">
+              <q-btn
+                color="primary"
+                icon="arrow_upward"
+                @click="moveUp"
+                :disable="isFirst"
+              />
+              <q-btn
+                color="primary"
+                icon="arrow_downward"
+                @click="moveDown"
+                :disable="isLast"
+              />
+            </q-btn-group>
             <q-btn
               color="negative"
               icon="event_busy"
@@ -225,4 +239,39 @@ function deleteCreneau(creneau: string) {
 
   planningStore.updatePeriodes();
 }
+
+function moveUp() {
+  const from = planningStore.periodes.findIndex(
+    (p) => p.id == +route.params.id
+  );
+  if (from < 1) return;
+
+  movePeriode(from, from - 1);
+}
+
+function moveDown() {
+  const from = planningStore.periodes.findIndex(
+    (p) => p.id == +route.params.id
+  );
+  if (from >= planningStore.periodes.length - 1) return;
+
+  movePeriode(from, from + 1);
+}
+
+function movePeriode(from: number, to: number) {
+  var f = planningStore.periodes.splice(from, 1)[0];
+  planningStore.periodes.splice(to, 0, f);
+  planningStore.updatePeriodes();
+}
+
+const isFirst = computed(() => {
+  return planningStore.periodes.findIndex((p) => p.id == +route.params.id) == 0;
+});
+
+const isLast = computed(() => {
+  return (
+    planningStore.periodes.findIndex((p) => p.id == +route.params.id) ==
+    planningStore.periodes.length - 1
+  );
+});
 </script>
