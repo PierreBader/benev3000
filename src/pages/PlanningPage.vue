@@ -117,51 +117,83 @@
 
       <div
         class="q-ma-md print-hide text-italic text-subtitle1"
-        v-if="
-          (!planningStore.benevoles || planningStore.benevoles.length == 0) &&
-          (!planningStore.periodes || planningStore.periodes.length == 0)
-        "
+        v-if="!planningStore.hasBenevoles && !planningStore.hasPeriodes"
       >
         C'est vide ici ! Ajoute des périodes et des bénévoles pour construire le
         planning
       </div>
 
-      <div
-        class="q-pb-md print-hide"
-        v-if="planningStore.benevoles && planningStore.benevoles.length > 0"
-      >
-        <div class="text-subtitle1">Bénévole</div>
-        <q-radio v-model="guiStore.selectedBenevole" val="" label="Tous" />
-        <q-radio
-          v-for="benevole in planningStore.benevoles"
-          v-model="guiStore.selectedBenevole"
-          v-bind:key="benevole.id"
-          :val="benevole.name"
-          :label="benevole.name"
-        />
+      <div class="q-pb-md print-hide" v-if="planningStore.hasBenevoles">
+        <div v-if="$q.screen.lt.sm">
+          <q-select
+            v-model="guiStore.selectedBenevole"
+            :options="benevoleOptions"
+            clearable
+            label="Bénévole"
+          />
+        </div>
+
+        <div v-else>
+          <div class="text-subtitle1">Bénévole</div>
+          <q-radio
+            v-model="guiStore.selectedBenevole"
+            :val="null"
+            label="Tous"
+          />
+          <q-radio
+            v-for="benevole in planningStore.benevoles"
+            v-model="guiStore.selectedBenevole"
+            v-bind:key="benevole.id"
+            :val="benevole.name"
+            :label="benevole.name"
+          />
+        </div>
       </div>
       <div
         class="q-pb-md print-hide text-italic text-subtitle1"
-        v-else-if="planningStore.periodes && planningStore.periodes.length > 0"
+        v-else-if="planningStore.hasPeriodes"
       >
         Aucun bénévole
       </div>
 
-      <div
-        class="row"
-        v-if="planningStore.periodes && planningStore.periodes.length > 0"
-      >
+      <div class="q-pb-md print-hide" v-if="planningStore.hasPeriodes">
+        <div v-if="$q.screen.lt.sm">
+          <q-select
+            v-model="guiStore.selectedPeriode"
+            :options="periodeOptions"
+            clearable
+            label="Période"
+          />
+        </div>
+
+        <div v-else>
+          <div class="text-subtitle1">Période</div>
+          <q-radio
+            v-model="guiStore.selectedPeriode"
+            :val="null"
+            label="Toutes"
+          />
+          <q-radio
+            v-for="periode in planningStore.periodes"
+            v-model="guiStore.selectedPeriode"
+            v-bind:key="periode.id"
+            :val="periode.name"
+            :label="periode.name"
+          />
+        </div>
+      </div>
+
+      <div v-if="planningStore.hasPeriodes" class="row">
         <PlanningPeriode
-          v-for="periode in planningStore.periodes"
+          v-for="periode in periodes"
           :key="periode.id"
           :periode="periode"
         />
       </div>
+
       <div
         class="q-pb-md print-hide text-italic text-subtitle1"
-        v-else-if="
-          planningStore.benevoles && planningStore.benevoles.length > 0
-        "
+        v-else-if="planningStore.hasBenevoles"
       >
         Aucune période
       </div>
@@ -174,7 +206,7 @@ import { useQuasar } from 'quasar';
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const planningStore = usePlanningStore();
@@ -238,4 +270,21 @@ async function setEventPass() {
 
   eventPassPrompt.value = false;
 }
+
+const benevoleOptions = computed(() => {
+  if (planningStore.benevoles.length === 0) return [];
+  return planningStore.benevoles.map((b) => b!.name);
+});
+
+const periodeOptions = computed(() => {
+  if (planningStore.periodes.length === 0) return [];
+  return planningStore.periodes.map((p) => p!.name);
+});
+
+const periodes = computed(() => {
+  if (!guiStore.selectedPeriode) return planningStore.periodes;
+  return planningStore.periodes.filter(
+    (p) => p.name == guiStore.selectedPeriode
+  );
+});
 </script>

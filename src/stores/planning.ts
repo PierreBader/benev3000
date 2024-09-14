@@ -20,6 +20,10 @@ export const usePlanningStore = defineStore('planning', {
     allPostes: (state) => {
       return [...new Set(state.periodes.flatMap((b) => b.postes))];
     },
+
+    hasBenevoles: (state) => state.benevoles && state.benevoles.length > 0,
+
+    hasPeriodes: (state) => state.periodes && state.periodes.length > 0,
   },
 
   persist: {

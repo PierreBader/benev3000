@@ -4,7 +4,6 @@
       <q-toolbar v-if="guiStore.eventWriteAllowed" class="bg-accent">
         <q-toolbar-title> Benev 3000 </q-toolbar-title>
 
-        <div class="q-mr-md">Place ton bénévole</div>
         <q-chip
           removable
           @remove="guiStore.eventPass = ''"
@@ -18,7 +17,6 @@
       <q-toolbar v-else class="bg-primary">
         <q-toolbar-title> Benev 3000 </q-toolbar-title>
 
-        <div class="q-mr-md">Place ton bénévole</div>
         <q-chip color="accent" text-color="white">
           Mode lecture
           <q-popup-edit v-model="guiStore.eventPass" auto-save v-slot="scope">
