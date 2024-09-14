@@ -46,6 +46,73 @@
             :to="'/' + planningStore.firebaseId + '/benevoles'"
           />
         </q-btn-group>
+        <q-btn-group push class="q-mr-md">
+          <q-btn
+            label="Clé d'accès"
+            color="primary"
+            outline
+            @click="openEventPassPrompt"
+            icon="key"
+          />
+
+          <q-dialog v-model="eventPassPrompt">
+            <q-card style="min-width: 350px">
+              <q-card-section>
+                <div class="text-h6">Modifier la clé d'accès</div>
+              </q-card-section>
+
+              <q-card-section class="q-pt-none">
+                <q-input
+                  dense
+                  v-model="currentEventPass"
+                  :type="isPwd ? 'password' : 'text'"
+                  label="Clé actuelle"
+                  autofocus
+                  :rules="[
+                    (val) =>
+                      val == guiStore.eventPass ||
+                      'Mot de passe actuel invalide',
+                  ]"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
+
+                <q-input
+                  dense
+                  v-model="newEventPass"
+                  :type="isPwd ? 'password' : 'text'"
+                  label="Nouvelle clé"
+                  @keyup.enter="setEventPass"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
+              </q-card-section>
+
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Annuler" color="negative" v-close-popup />
+                <q-btn
+                  flat
+                  label="Confirmer"
+                  color="positive"
+                  v-close-popup
+                  @click="setEventPass"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </q-btn-group>
       </div>
 
       <div
@@ -103,16 +170,23 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import PlanningPeriode from 'src/components/PlanningPeriode.vue';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-import { onMounted, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
 const route = useRoute();
 const router = useRouter();
+
+const eventPassPrompt = ref(false);
+const currentEventPass = ref('');
+const newEventPass = ref('');
+const isPwd = ref(true);
+const $q = useQuasar();
 
 defineOptions({
   name: 'PlanningPage',
@@ -142,5 +216,26 @@ async function syncEvent() {
   if (!guiStore.eventLoaded) {
     router.replace('/');
   }
+}
+
+function openEventPassPrompt() {
+  currentEventPass.value = '';
+  newEventPass.value = '';
+  eventPassPrompt.value = true;
+}
+
+async function setEventPass() {
+  if (currentEventPass.value != guiStore.eventPass) {
+  }
+
+  await planningStore.setEventHash(newEventPass.value);
+  guiStore.eventPass = newEventPass.value;
+
+  $q.notify({
+    position: 'top',
+    message: "Clé d'accès modifiée",
+  });
+
+  eventPassPrompt.value = false;
 }
 </script>

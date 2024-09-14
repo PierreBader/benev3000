@@ -45,7 +45,7 @@
           <div class="text-subtitle1">Détails du bénévole</div>
           <div class="q-pb-md">
             <q-btn
-              color="red"
+              color="negative"
               icon="person_remove"
               size="md"
               label="Supprimer"

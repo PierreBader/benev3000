@@ -47,7 +47,7 @@
           <div class="text-subtitle1">Détails de la période</div>
           <div class="q-pb-md">
             <q-btn
-              color="red"
+              color="negative"
               icon="event_busy"
               size="md"
               label="Supprimer"
