@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-ma-sm">
+  <q-card class="q-ma-sm periodeCard">
     <q-card-section>
       <div class="text-h6">{{ periode.name }}</div>
     </q-card-section>
@@ -87,6 +87,9 @@ const props = defineProps<Props>();
   }
 }
 @media print {
+  .periodeCard {
+    page-break-inside: avoid;
+  }
   .planningPeriode {
     font-size: 8px;
   }
