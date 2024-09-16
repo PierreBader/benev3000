@@ -14,6 +14,7 @@ export const useGuiStore = defineStore('gui', {
     eventWriteAllowed: (state) => {
       if (!state.eventLoaded) return false;
       const planning = usePlanningStore();
+      if (!planning.eventHash) return true;
       return compareSync(state.eventPass, planning.eventHash);
     },
   },
