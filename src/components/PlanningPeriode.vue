@@ -11,14 +11,14 @@
         <thead>
           <tr>
             <th>&nbsp;</th>
-            <th v-for="poste in periode.postes" :key="poste">{{ poste }}</th>
+            <th v-for="poste in postes" :key="poste">{{ poste }}</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr v-for="creneau in periode.creneaux" :key="creneau">
+          <tr v-for="creneau in props.periode.creneaux" :key="creneau">
             <th>{{ creneau }}</th>
-            <td v-for="poste in periode.postes" :key="poste">
+            <td v-for="poste in postes" :key="poste">
               <PlanningCell
                 :periode="periode.name"
                 :poste="poste"
@@ -33,8 +33,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import PlanningCell from './PlanningCell.vue';
 import { Periode } from './models';
+import { useGuiStore } from 'src/stores/gui';
+
+const guiStore = useGuiStore();
 
 defineOptions({
   name: 'PlanningPeriode',
@@ -44,7 +48,14 @@ interface Props {
   periode: Periode;
 }
 
-defineProps<Props>();
+const postes = computed(() => {
+  if (!guiStore.selectedPoste) return props.periode.postes;
+  if (props.periode.postes.includes(guiStore.selectedPoste))
+    return [guiStore.selectedPoste];
+  else return [];
+});
+
+const props = defineProps<Props>();
 </script>
 
 <style lang="scss" scoped>

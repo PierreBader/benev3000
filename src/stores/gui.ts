@@ -4,8 +4,9 @@ import { compareSync } from 'bcryptjs';
 
 export const useGuiStore = defineStore('gui', {
   state: () => ({
-    selectedBenevole: '',
-    selectedPeriode: '',
+    selectedBenevole: null,
+    selectedPeriode: null,
+    selectedPoste: null,
     eventLoaded: false,
     eventPass: '',
   }),

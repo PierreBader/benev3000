@@ -74,7 +74,10 @@ const selectableCell = computed(() => {
 });
 
 const selectedCell = computed(() => {
-  return benevoles.value.includes(guiStore.selectedBenevole);
+  return (
+    guiStore.selectedBenevole &&
+    benevoles.value.includes(guiStore.selectedBenevole)
+  );
 });
 
 function cellClick() {

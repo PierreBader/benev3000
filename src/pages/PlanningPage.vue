@@ -183,6 +183,29 @@
         </div>
       </div>
 
+      <div class="q-pb-md print-hide" v-if="planningStore.hasPeriodes">
+        <div v-if="$q.screen.lt.sm">
+          <q-select
+            v-model="guiStore.selectedPoste"
+            :options="planningStore.allPostes"
+            clearable
+            label="Poste"
+          />
+        </div>
+
+        <div v-else>
+          <div class="text-subtitle1">Poste</div>
+          <q-radio v-model="guiStore.selectedPoste" :val="null" label="Tous" />
+          <q-radio
+            v-for="poste in planningStore.allPostes"
+            v-model="guiStore.selectedPoste"
+            v-bind:key="poste"
+            :val="poste"
+            :label="poste"
+          />
+        </div>
+      </div>
+
       <div v-if="planningStore.hasPeriodes" class="row">
         <PlanningPeriode
           v-for="periode in periodes"
@@ -282,10 +305,16 @@ const periodeOptions = computed(() => {
 });
 
 const periodes = computed(() => {
-  if (!guiStore.selectedPeriode) return planningStore.periodes;
-  return planningStore.periodes.filter(
-    (p) => p.name == guiStore.selectedPeriode
-  );
+  return planningStore.periodes.filter((p) => {
+    if (guiStore.selectedPeriode && p.name != guiStore.selectedPeriode)
+      return false;
+    if (
+      guiStore.selectedPoste &&
+      (!p.postes || !p.postes.includes(guiStore.selectedPoste))
+    )
+      return false;
+    return true;
+  });
 });
 </script>
 
