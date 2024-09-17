@@ -251,9 +251,9 @@ function importBenevoles() {
     .replaceAll('"[', '[')
     .replaceAll(']"', ']');
   try {
-    const data: MS8Benev[] = JSON.parse(sanitizedJson);
+    const data: Benevole[] = JSON.parse(sanitizedJson);
 
-    data.forEach((line: MS8Benev) => {
+    data.forEach((line) => {
       importBenevole(line);
     });
 
@@ -263,26 +263,16 @@ function importBenevoles() {
   }
 }
 
-function importBenevole(bevenoleData: MS8Benev) {
-  console.log(bevenoleData);
-}
-
-interface MS8Benev {
-  dimanche6: string;
-  dimanche6D: string;
-  dimange29: string;
-  email: string;
-  jeudi3: string;
-  lundi7: string;
-  lundi30: string;
-  mardi1: string;
-  mercredi2: string;
-  name: string;
-  postes: string;
-  samedi5: string;
-  tel: string;
-  timestamp: string;
-  vendredi4: string;
-  vendredi4F: string;
+function importBenevole(bevenoleData: Benevole) {
+  const existingBenevole = planningStore.benevoles.find(
+    (b) => b.email == bevenoleData.email
+  );
+  if (existingBenevole) {
+    existingBenevole.availability = bevenoleData.availability;
+    existingBenevole.name = bevenoleData.name;
+    existingBenevole.postes = bevenoleData.postes;
+  } else {
+    planningStore.importBenevole(bevenoleData);
+  }
 }
 </script>

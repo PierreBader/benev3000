@@ -123,6 +123,24 @@ export const usePlanningStore = defineStore('planning', {
       return id;
     },
 
+    importBenevole(benevole: Benevole) {
+      let id = 1;
+      if (this.benevoles.length > 0)
+        id = this.benevoles.map((b) => b.id).sort((a, b) => b - a)[0] + 1;
+
+      this.benevoles.push({
+        id: id,
+        name: benevole.name,
+        email: benevole.email,
+        postes: benevole.postes,
+        availability: benevole.availability,
+      });
+
+      this.updateEvent();
+
+      return id;
+    },
+
     copyBenevole(benevole: Benevole) {
       let id = 1;
       if (this.benevoles.length > 0)
