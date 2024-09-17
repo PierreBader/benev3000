@@ -113,6 +113,7 @@ export const usePlanningStore = defineStore('planning', {
       this.benevoles.push({
         id: id,
         name: 'Bénévole ' + id,
+        email: '',
         postes: [],
         availability: [],
       });
@@ -130,6 +131,7 @@ export const usePlanningStore = defineStore('planning', {
       this.benevoles.push({
         id: id,
         name: 'Bénévole ' + id,
+        email: '',
         postes: benevole.postes,
         availability: benevole.availability,
       });

@@ -34,8 +34,46 @@
           color="primary"
           icon="person_add"
           label="Nouveau"
+          class="q-ma-sm"
           @click="addBenevole"
         />
+        <br />
+        <q-btn
+          color="secondary"
+          icon="upload"
+          label="Importer"
+          class="q-ma-sm"
+          @click="openImportPopup"
+        />
+        <q-dialog v-model="isImportPopopOpen" persistent>
+          <q-card style="min-width: 350px">
+            <q-card-section>
+              <div class="text-h6">
+                Contenu de la case A1 de la feuille "Export Benev3000"
+              </div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              <q-input
+                dense
+                type="textarea"
+                v-model="importData"
+                autofocus
+                @keyup.enter="importBenevoles"
+              />
+            </q-card-section>
+
+            <q-card-actions align="right" class="text-primary">
+              <q-btn flat label="Annuler" color="negative" v-close-popup />
+              <q-btn
+                flat
+                label="Importer"
+                color="positive"
+                @click="importBenevoles"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
       <div class="col-9 items-center">
         <div v-if="!selected" class="q-pa-md text-subtitle1 text-italic">
@@ -65,6 +103,13 @@
             <q-input
               v-model="selected.name"
               label="Nom"
+              @blur="planningStore.updateBenevoles()"
+            />
+
+            <q-input
+              v-model="selected.email"
+              label="Adresse e-mail"
+              type="email"
               @blur="planningStore.updateBenevoles()"
             />
 
@@ -117,7 +162,7 @@
 import { Benevole } from 'src/components/models';
 import { useGuiStore } from 'src/stores/gui';
 import { usePlanningStore } from 'src/stores/planning';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
@@ -125,6 +170,9 @@ const router = useRouter();
 
 const planningStore = usePlanningStore();
 const guiStore = useGuiStore();
+
+const isImportPopopOpen = ref(false);
+const importData = ref('');
 
 defineOptions({
   name: 'BenevolesPage',
@@ -190,5 +238,51 @@ function deleteBenevole() {
   router.replace({ path: '/' + planningStore.firebaseId + '/benevoles' });
 
   planningStore.updateBenevoles();
+}
+
+function openImportPopup() {
+  importData.value = '';
+  isImportPopopOpen.value = true;
+}
+
+function importBenevoles() {
+  const sanitizedJson = importData.value
+    .replaceAll('""', '"')
+    .replaceAll('"[', '[')
+    .replaceAll(']"', ']');
+  try {
+    const data: MS8Benev[] = JSON.parse(sanitizedJson);
+
+    data.forEach((line: MS8Benev) => {
+      importBenevole(line);
+    });
+
+    isImportPopopOpen.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function importBenevole(bevenoleData: MS8Benev) {
+  console.log(bevenoleData);
+}
+
+interface MS8Benev {
+  dimanche6: string;
+  dimanche6D: string;
+  dimange29: string;
+  email: string;
+  jeudi3: string;
+  lundi7: string;
+  lundi30: string;
+  mardi1: string;
+  mercredi2: string;
+  name: string;
+  postes: string;
+  samedi5: string;
+  tel: string;
+  timestamp: string;
+  vendredi4: string;
+  vendredi4F: string;
 }
 </script>
