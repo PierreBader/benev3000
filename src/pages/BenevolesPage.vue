@@ -269,7 +269,6 @@ function importBenevole(bevenoleData: Benevole) {
   );
   if (existingBenevole) {
     existingBenevole.availability = bevenoleData.availability;
-    existingBenevole.name = bevenoleData.name;
     existingBenevole.postes = bevenoleData.postes;
   } else {
     planningStore.importBenevole(bevenoleData);
