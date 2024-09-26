@@ -4,14 +4,14 @@
     :class="{ selectableCell, selectedCell }"
     @click="cellClick"
   >
-    <div
+    <span
       v-for="benevole in benevoles"
       :key="benevole"
       class="benevole"
       :class="{ selected: benevole == guiStore.selectedBenevole }"
     >
       {{ benevole }}
-    </div>
+    </span>
   </div>
 </template>
 
@@ -113,8 +113,9 @@ function cellClick() {
   margin: 0.2em;
 
   .benevole {
+    flex: 1;
     margin-right: 0.5em;
-    white-space: nowrap;
+    display: inline-block;
   }
 }
 
