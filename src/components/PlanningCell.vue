@@ -5,12 +5,12 @@
     @click="cellClick"
   >
     <div
-      v-for="benevole in benevoles"
+      v-for="(benevole, index) in benevoles"
       :key="benevole"
       class="benevole"
       :class="{ selected: benevole == guiStore.selectedBenevole }"
     >
-      {{ benevole }}
+      {{ benevole }}{{ index < benevoles.length - 1 ? ', ' : '' }}
     </div>
   </div>
 </template>
